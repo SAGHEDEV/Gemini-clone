@@ -47,7 +47,7 @@ const SIdeBar = () => {
         </span>
 
         {tabOpen && (
-          <div>
+          <div className="max-h-[500px]">
             <span className="text-base font-semibold flex items-center gap-2">
               Recent
             </span>
@@ -55,11 +55,13 @@ const SIdeBar = () => {
               {recentChats.map(({ chat }: { chat: string }) => (
                 <span
                   onClick={() => sendPrompt(chat)}
-                  className={`max-w-[250px] text-sm font-normal flex items-center gap-2 p-2 rounded-full hover:bg-gray-600/10 cursor-pointer ${
+                  className={`max-w-[250px] text-sm font-normal flex justify-start items-center gap-2 p-2 rounded-full hover:bg-gray-600/10 cursor-pointer ${
                     recentChat === chat ? "bg-gray-600/10" : ""
                   }`}
                 >
-                  <IoChatboxEllipsesOutline size={20} />
+                  <div>
+                    <IoChatboxEllipsesOutline size={20} className="!w-5 !h-5" />
+                  </div>
                   <span className="line-clamp-1 font-normal ">{chat}</span>
                 </span>
               ))}

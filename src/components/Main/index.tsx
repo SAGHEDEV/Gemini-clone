@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import { Popover } from "antd";
 import { signOut } from "firebase/auth";
+import Dictaphone from "../../hooks/useVoiceSearch";
 
 // interface TypingEffectProps {
 //   text: string; // Must be a string
@@ -143,6 +144,17 @@ const MainPage = () => {
     navigate("/");
   }
 
+  const records = Dictaphone();
+  if (!records) {
+    throw new Error("Recording not supported!!!");
+  }
+  const { listening, transcript, start } = records;
+  useEffect(() => {
+    if (listening) {
+      setInput(transcript);
+    }
+  }, [listening, transcript]);
+
   return (
     <main className="w-full  relative text-gray-700 h-screen max-h-screen scroll-smooth">
       <div className="w-full flex justify-between  items-center sticky top-3 p-3 px-5 z-20 bg-white/60 backdrop-blur-lg">
@@ -225,7 +237,7 @@ const MainPage = () => {
               </div>
             )}
           </div>
-          <div className="flex flex-col md:flex-row justify-items-stretch items-start gap-4 mt-8">
+          <div className="w-full flex flex-col md:flex-row justify-items-stretch items-start gap-4 mt-8">
             {loading ? (
               <div className="flex justify-start items-start gap-3">
                 <img
@@ -249,7 +261,7 @@ const MainPage = () => {
               />
             )}
             {!error ? (
-              <p className="px-2 md:px-4 w-full max-w-[300px] md:max-w-[700px] lg:max-w-[1000px] bg-gray-200/5 rounded-3xl rounded-tl-none leading-[35px] md:leading-[50px]">
+              <p className="px-2 md:px-4 w-[80%] max-w-[1000px] bg-gray-200/5 rounded-3xl rounded-tl-none leading-[35px] md:leading-[50px]">
                 <Markdown>{resultData}</Markdown>
               </p>
             ) : (
@@ -283,7 +295,16 @@ const MainPage = () => {
             <span className="p-2 cursor-pointer rounded-full hover:bg-gray-600/10">
               <BiSolidImageAdd size={24} />
             </span>
-            <span className="p-2 cursor-pointer rounded-full hover:bg-gray-600/10">
+            <span
+              onClick={() => {
+                if (!listening) {
+                  start();
+                }
+              }}
+              className={`p-2 cursor-pointer rounded-full hover:bg-gray-600/10 ${
+                listening ? "bg-gray-200/30 animate-pulse" : ""
+              }`}
+            >
               <AiFillAudio size={24} />
             </span>
             {input ? (
